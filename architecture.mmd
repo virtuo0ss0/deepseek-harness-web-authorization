@@ -1,0 +1,25 @@
+flowchart LR
+    subgraph Browser["Browser · transient interaction"]
+        UI["Models footer<br/>ui-authorization"]
+    end
+    subgraph Host["Host · protocol and credential ownership"]
+        Gateway["Authenticated<br/>Remote / Gateway"]
+        Companion["web-authorization<br/>attempts and leases"]
+        Authorization["Existing<br/>AuthorizationService"]
+        Credentials["Existing<br/>credential provider"]
+        Flow["Registered<br/>provider-owned flow"]
+    end
+    UI -->|"list / begin / status / answer / cancel"| Gateway
+    Gateway --> Companion
+    Companion --> Authorization
+    Authorization -->|"session.commit()"| Credentials
+    Authorization -->|"execute"| Flow
+    Flow -->|"provider adapter writes"| Credentials
+    Companion -.->|"bounded notices, prompts, outcome"| Gateway
+    Gateway -.->|"credential payloads excluded"| UI
+    classDef browser fill:#eff6ff,stroke:#2563eb,color:#172554
+    classDef host fill:#f8fafc,stroke:#64748b,color:#0f172a
+    classDef store fill:#ecfdf5,stroke:#047857,color:#064e3b
+    class UI browser
+    class Gateway,Companion,Authorization,Flow host
+    class Credentials store
